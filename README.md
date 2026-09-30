@@ -1,2 +1,8 @@
 # Scop
-Ce mini-projet est une première incursion dans l’utilisation d’OpenGL.
+This project has been created as part of the 42 curriculum by lboudjem
+
+# Description
+
+# Instructions
+
+# Resources

@@ -1,20 +1,24 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include "../include/color.hpp"
 
-const char *vertexShaderSource = "#version 330 core\n"
-                                 "layout (location = 0) in vec3 aPos;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "void main()\n"
-                                   "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                   "}\n\0";
+std::string readShaderSource(const char *filePath)
+{
+    std::ifstream shaderFile(filePath);
+    if (!shaderFile.is_open())
+    {
+        std::cerr << "Erreur : Impossible d'ouvrir le fichier shader : " << filePath << std::endl;
+        return "";
+    }
+    std::stringstream shaderStream;
+    shaderStream << shaderFile.rdbuf();
+    shaderFile.close();
+    return shaderStream.str();
+}
 
 int main(int argc, char **argv)
 {
@@ -38,6 +42,12 @@ int main(int argc, char **argv)
         std::cerr << "Failed to initialize GLEW\n";
         return -1;
     }
+
+    std::string vertexCode = readShaderSource("./src/shaders/vertexShader.glsl");
+    std::string fragmentCode = readShaderSource("./src/shaders/fragmentShader.glsl");
+
+    const char *vShaderCode = vertexCode.c_str();
+    const char *fShaderCode = fragmentCode.c_str();
 
     float vertices[] = {
         0.5f, 0.5f, 0.0f,   // top right
@@ -85,14 +95,13 @@ int main(int argc, char **argv)
     // Vertex shader
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glShaderSource(vertexShader, 1, &vShaderCode, NULL);
     glCompileShader(vertexShader);
 
     // Fragment shader
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glShaderSource(fragmentShader, 1, &fShaderCode, NULL);
     glCompileShader(fragmentShader);
 
     // Program shader : combinaison des differents shaders (vertex + fragment)

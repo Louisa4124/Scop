@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+// TODO. renommer le fichier? ajouter la majuscule
 namespace utils {
 
     Color hexToColor(unsigned int hex, float a) {

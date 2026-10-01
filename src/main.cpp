@@ -1,53 +1,16 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
+#include "../include/Window.hpp"
+#include "../include/Shader.hpp"
+#include "../include/Buffer.hpp"
 #include "../include/color.hpp"
-
-std::string readShaderSource(const char *filePath)
-{
-    std::ifstream shaderFile(filePath);
-    if (!shaderFile.is_open())
-    {
-        std::cerr << "Erreur : Impossible d'ouvrir le fichier shader : " << filePath << std::endl;
-        return "";
-    }
-    std::stringstream shaderStream;
-    shaderStream << shaderFile.rdbuf();
-    shaderFile.close();
-    return shaderStream.str();
-}
+#include <iostream>
 
 int main(int argc, char **argv)
 {
-    if (!glfwInit())
-        return -1;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Initialisation de la fenêtre GLFW et GLEW
+    Window window(800, 600, "Scop - OpenGL");
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Scop - OpenGL", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Failed to initialize GLEW\n";
-        return -1;
-    }
-
-    std::string vertexCode = readShaderSource("./src/shaders/vertexShader.glsl");
-    std::string fragmentCode = readShaderSource("./src/shaders/fragmentShader.glsl");
-
-    const char *vShaderCode = vertexCode.c_str();
-    const char *fShaderCode = fragmentCode.c_str();
+    // Chargement et compilation des shaders depuis leurs fichiers
+    Shader shaderProgram("./shaders/vertexShader.glsl", "./shaders/fragmentShader.glsl");
 
     float vertices[] = {
         0.5f, 0.5f, 0.0f,   // top right
@@ -65,91 +28,48 @@ int main(int argc, char **argv)
     //                            => permet d'envoyer autant de donnees que possible a la carte graphique
     // Vertex Array Object (VAO) => Decrit les donnees
     // Element Buffer Objects (EBO) => Tampon qui memorise des indices (pour decider quels sommets sont a afficher et dans quel ordre)
-    unsigned int VBO;
-    unsigned int VAO;
-    unsigned int EBO;
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &EBO);
+    
+    // 0. Création et liaison du VAO (Vertex Array Object)
+    VertexArray vao;
+    vao.bind();
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBindVertexArray(VAO);
-
-    // Copier les sommets dans un tampon pour qu’OpenGL les utilise
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // ebo
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // Initialiser les pointeurs d’attributs de sommets
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
+    // 1. Copier les sommets dans un tampon VBO pour qu’OpenGL les utilise
     // GL_STATIC_DRAW : les données ne seront pas modifiées (ou rarement) ;
     // GL_DYNAMIC_DRAW : les données seront souvent modifiées ;
     // GL_STREAM_DRAW : les données seront modifiées à chaque affichage.
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    VertexBuffer vbo(vertices, sizeof(vertices));
 
-    // Vertex shader
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vShaderCode, NULL);
-    glCompileShader(vertexShader);
+    // 2. Copier les indices dans un tampon EBO
+    IndexBuffer ebo(indices, 6);
 
-    // Fragment shader
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fShaderCode, NULL);
-    glCompileShader(fragmentShader);
+    // 3. Initialiser les pointeurs d’attributs de sommets dans le VAO
+    vao.addBuffer(vbo, 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
-    // Program shader : combinaison des differents shaders (vertex + fragment)
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
+    // Déliage pour éviter les modifications accidentelles
+    vao.unbind();
 
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glUseProgram(shaderProgram);
-
-    // suppression des vertex et fragment shader une fois integrees au program shader
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    // 0. Copier nos sommets dans un tampon
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 1. Initialiser un pointeur vers les attributs des sommets
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-    // 2. Utiliser notre program shader pour l'affichage d'un objet
-    glUseProgram(shaderProgram);
-
-    while (!glfwWindowShouldClose(window))
+    // 4. Boucle de rendu
+    while (!window.shouldClose())
     {
         utils::glClearColorHex(0x000000);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // 3. Afficher un objet
-        glUseProgram(shaderProgram);
-        // GL_LINE : dessine les lignes entre loes vertices sans remplir l'interieur
+        // Utiliser notre program shader pour l'affichage d'un objet
+        shaderProgram.use();
+
+        // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
         // GL_FILL : l'interieur est plein
         // GL_POINT : dessines uniquement les vertices
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        // Afficher un objet
+        vao.bind();
+        glDrawElements(GL_TRIANGLES, ebo.getCount(), GL_UNSIGNED_INT, 0);
+        vao.unbind();
+
+        window.swapBuffers();
+        window.pollEvents();
     }
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
     return 0;
 }

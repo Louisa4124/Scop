@@ -77,7 +77,6 @@ void VertexArray::addBuffer(const VertexBuffer &vbo, GLuint layoutLocation, GLin
 {
     bind();
     vbo.bind();
-    // Initialiser les pointeurs d’attributs de sommets
     glVertexAttribPointer(layoutLocation, size, type, normalized, stride, pointer);
     glEnableVertexAttribArray(layoutLocation);
 }

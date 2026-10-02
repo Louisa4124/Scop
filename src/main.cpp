@@ -2,7 +2,12 @@
 #include "../include/Shader.hpp"
 #include "../include/Buffer.hpp"
 #include "../include/color.hpp"
+#include "../include/Matrix.hpp"
+#include "../include/ObjLoader.hpp"
 #include <iostream>
+#include <vector>
+#include <cmath>
+#include <array>
 
 int main(int argc, char **argv)
 {
@@ -12,50 +17,57 @@ int main(int argc, char **argv)
     // Chargement et compilation des shaders depuis leurs fichiers
     Shader shaderProgram("./shaders/vertexShader.glsl", "./shaders/fragmentShader.glsl");
 
-    float vertices[] = {
-        0.5f, 0.5f, 0.0f,   // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f   // top left
-    };
-    unsigned int indices[] = {
-        // Notons que l’on commence à 0!
-        0, 1, 3, // premier triangle
-        1, 2, 3  // second triangle
-    };
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+
+    if (!ObjLoader::loadOBJ("./assets/cat.obj", vertices, indices))
+    {
+        return -1;
+    }
+    std::cout << "Nombre de sommets : " << vertices.size() / 3 << std::endl;
+    std::cout << "Nombre d'indices : " << indices.size() << std::endl;
 
     // Vertex Buffer Object (VBO) => Stocke les donnees
     //                            => permet d'envoyer autant de donnees que possible a la carte graphique
     // Vertex Array Object (VAO) => Decrit les donnees
     // Element Buffer Objects (EBO) => Tampon qui memorise des indices (pour decider quels sommets sont a afficher et dans quel ordre)
-    
+
     // 0. Création et liaison du VAO (Vertex Array Object)
     VertexArray vao;
     vao.bind();
 
     // 1. Copier les sommets dans un tampon VBO pour qu’OpenGL les utilise
-    // GL_STATIC_DRAW : les données ne seront pas modifiées (ou rarement) ;
-    // GL_DYNAMIC_DRAW : les données seront souvent modifiées ;
+    // GL_STATIC_DRAW : les données ne seront pas modifiées (ou rarement)
+    // GL_DYNAMIC_DRAW : les données seront souvent modifiées
     // GL_STREAM_DRAW : les données seront modifiées à chaque affichage.
-    VertexBuffer vbo(vertices, sizeof(vertices));
+    VertexBuffer vbo(vertices.data(), vertices.size() * sizeof(float));
 
     // 2. Copier les indices dans un tampon EBO
-    IndexBuffer ebo(indices, 6);
+    IndexBuffer ebo(indices.data(), indices.size());
 
     // 3. Initialiser les pointeurs d’attributs de sommets dans le VAO
     vao.addBuffer(vbo, 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
-    // Déliage pour éviter les modifications accidentelles
     vao.unbind();
+
+    glEnable(GL_DEPTH_TEST);
+
+    float i = 0.0f;
 
     // 4. Boucle de rendu
     while (!window.shouldClose())
     {
-        utils::glClearColorHex(0x000000);
-        glClear(GL_COLOR_BUFFER_BIT);
+        i += 0.5f;
 
-        // Utiliser notre program shader pour l'affichage d'un objet
+        std::array<float, 16> rotationMatrix = Matrix::createRotationY(-90.0f + i);
+        utils::glClearColorHex(0x000000);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         shaderProgram.use();
+
+        // Récupération de l'emplacement de u_Model et envoi de la matrice
+        GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, rotationMatrix.data());
 
         // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
         // GL_FILL : l'interieur est plein

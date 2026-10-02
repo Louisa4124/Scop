@@ -64,6 +64,7 @@ bool ObjLoader::loadOBJ(const std::string &filePath,
                 }
             }
 
+            // triangle fan
             for (size_t i = 1; i + 1 < faceIndices.size(); ++i)
             {
                 outIndices.push_back(faceIndices[0]);

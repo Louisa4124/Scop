@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    if (!ObjLoader::loadOBJ("./assets/cat.obj", vertices, indices))
+    if (!ObjLoader::loadOBJ("./assets/42.obj", vertices, indices))
     {
         return -1;
     }
@@ -69,10 +69,17 @@ int main(int argc, char **argv)
         GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, rotationMatrix.data());
 
+        // Mise à jour de la couleur
+        float timeValue = glfwGetTime();
+        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+        float redValue = sin(timeValue) * 2.0f + 0.5f;
+        GLint vertexColorLocation = glGetUniformLocation(shaderProgram.getID(), "ourColor");
+        glUniform4f(vertexColorLocation, 0.8f, greenValue, 1.0f, 0.8f);
+
         // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
         // GL_FILL : l'interieur est plein
         // GL_POINT : dessines uniquement les vertices
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // Afficher un objet
         vao.bind();

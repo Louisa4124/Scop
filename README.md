@@ -5,7 +5,20 @@ This project has been created as part of the 42 curriculum by lboudjem
 
 # Instructions
 
-# Resources
+Installation:
+
+    git clone git@github.com:Louisa4124/Scop.git
+    cd ./scop
+    make
+
+Utilisation:
+
+    ./scop [fichier .obj]
+
+Exemple:
+
+    ./scop ./assets/42.obj
+
 
 # Fonctionnement 
 
@@ -50,3 +63,17 @@ f 4 1 5
 #### Structure d'une face
 
 Chaque ligne **f** définit un triangle/polygone. Les valeurs font référence aux indices des listes **v**, **vt**, et **vn** lues plus haut dans le fichier.
+
+Dans le cas de polygones, etant donner que OpenGL ne sait pas afficher directements ces formes avec ```GL_TRIANGLES```, on doit effectuer une triangulation et decouper les polygones en triangles.
+
+Les faces peuvent aussi avoir des textures/normales, et se presentent sous les formes suivantes:
+
+- Position seule : **f v1 v2 v3**
+- Position et Coordonnées de Texture : **f v1/vt1 v2/vt2 v3/vt3**
+- Position, Texture et Normale : **f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3**
+- Position et Normale : **f v1//vn1 v2//vn2 v3//vn3**
+
+# Resources
+
+- https://opengl.developpez.com/tutoriels/apprendre-opengl/
+- https://www.scratchapixel.com/lessons/3d-basic-rendering/obj-file-format//obj-file-format.html

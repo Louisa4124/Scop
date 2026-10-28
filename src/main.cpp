@@ -4,6 +4,7 @@
 #include "../include/color.hpp"
 #include "../include/Matrix.hpp"
 #include "../include/ObjLoader.hpp"
+#include "../include/Input.hpp"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -52,14 +53,17 @@ int main(int argc, char **argv)
 
     glEnable(GL_DEPTH_TEST);
 
-    float i = 0.0f;
+    float rotationAngleY = 0.0f;
+    float rotationAngleX = 0.0f;
+    Input inputManager;
 
-    // 4. Boucle de rendu
     while (!window.shouldClose())
     {
-        i += 0.5f;
+        rotationAngleY += inputManager.processInputRotationY(window);
+        rotationAngleX += inputManager.processInputRotationX(window);
 
-        std::array<float, 16> rotationMatrix = Matrix::createRotationY(-90.0f + i);
+        std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
+        std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
         utils::glClearColorHex(0x000000);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -67,7 +71,12 @@ int main(int argc, char **argv)
 
         // Récupération de l'emplacement de u_Model et envoi de la matrice
         GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, rotationMatrix.data());
+
+        // N'envoie pas deux matrices séparées au même uniform.
+        // Il faut les combiner puis envoyer le résultat une seule fois.
+        // Exemple (si tu as une fonction multiply) :
+        std::array<float, 16> modelMatrix = Matrix::multiply(rotationMatrixY, rotationMatrixX);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, modelMatrix.data());
 
         // Mise à jour de la couleur
         float timeValue = glfwGetTime();

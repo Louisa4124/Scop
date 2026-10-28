@@ -11,6 +11,13 @@ private:
     bool rotationToggledY = false;
     bool rotationToggledX = false;
 
+    bool plusKeyPressedLastFrame = false;
+    bool minusKeyPressedLastFrame = false;
+    int speedIndex = 0; // 0.5f, 0.8f, 1.0f, 1.5f
+
+    void updateRotationSpeed();
+    float getRotationSpeed() const;
+
 public:
     float processInputRotationY(Window &window);
     float processInputRotationX(Window &window);

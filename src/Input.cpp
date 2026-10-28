@@ -4,11 +4,45 @@
 #include "../include/Input.hpp"
 #include "../include/Window.hpp"
 
+void Input::updateRotationSpeed()
+{
+    GLFWwindow *w = glfwGetCurrentContext();
+    if (!w)
+        return;
+
+    // gerer '+' avec clavie + pave numerique
+    bool plusPressed =
+        (glfwGetKey(w, GLFW_KEY_EQUAL) == GLFW_PRESS) ||
+        (glfwGetKey(w, GLFW_KEY_KP_ADD) == GLFW_PRESS);
+
+    // gerer '-' avec clavie + pave numerique
+    bool minusPressed =
+        (glfwGetKey(w, GLFW_KEY_MINUS) == GLFW_PRESS) ||
+        (glfwGetKey(w, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS);
+
+    if (plusPressed && !plusKeyPressedLastFrame && speedIndex < 3)
+        ++speedIndex;
+
+    if (minusPressed && !minusKeyPressedLastFrame && speedIndex > 0)
+        --speedIndex;
+
+    plusKeyPressedLastFrame = plusPressed;
+    minusKeyPressedLastFrame = minusPressed;
+}
+
+float Input::getRotationSpeed() const
+{
+    static const float speeds[4] = {0.5f, 0.8f, 1.0f, 1.5f};
+    return speeds[speedIndex];
+}
+
 float Input::processInputRotationY(Window &window)
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
         return 0.0f;
+
+    updateRotationSpeed();
 
     if (glfwGetKey(w, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
@@ -25,10 +59,10 @@ float Input::processInputRotationY(Window &window)
     bool rightPressed = (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS);
 
     if (rightPressed)
-        return -0.5f;
+        return -getRotationSpeed();
 
     if (leftPressed || rotationToggledY)
-        return 0.5f;
+        return getRotationSpeed();
 
     return 0.0f;
 }
@@ -39,6 +73,8 @@ float Input::processInputRotationX(Window &window)
     if (!w)
         return 0.0f;
 
+    updateRotationSpeed();
+
     bool sPressed = (glfwGetKey(w, GLFW_KEY_S) == GLFW_PRESS);
     if (sPressed && !sKeyPressedLastFrame)
         rotationToggledX = !rotationToggledX;
@@ -48,10 +84,10 @@ float Input::processInputRotationX(Window &window)
     bool downPressed = (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS);
 
     if (downPressed)
-        return -0.5f;
+        return -getRotationSpeed();
 
     if (upPressed || rotationToggledX)
-        return 0.5f;
+        return getRotationSpeed();
 
     return 0.0f;
 }

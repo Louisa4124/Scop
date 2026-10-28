@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    if (!ObjLoader::loadOBJ("./assets/42.obj", vertices, indices))
+    if (!ObjLoader::loadOBJ("./assets/cat.obj", vertices, indices))
     {
         return -1;
     }

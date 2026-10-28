@@ -20,7 +20,7 @@ void Input::updateRotationSpeed()
         (glfwGetKey(w, GLFW_KEY_MINUS) == GLFW_PRESS) ||
         (glfwGetKey(w, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS);
 
-    if (plusPressed && !plusKeyPressedLastFrame && speedIndex < 3)
+    if (plusPressed && !plusKeyPressedLastFrame && speedIndex < 5)
         ++speedIndex;
 
     if (minusPressed && !minusKeyPressedLastFrame && speedIndex > 0)
@@ -32,7 +32,7 @@ void Input::updateRotationSpeed()
 
 float Input::getRotationSpeed() const
 {
-    static const float speeds[5] = {0.5f, 0.8f, 1.0f, 1.5f, 2.0f};
+    static const float speeds[6] = {0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f};
     return speeds[speedIndex];
 }
 

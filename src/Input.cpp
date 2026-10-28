@@ -32,7 +32,7 @@ void Input::updateRotationSpeed()
 
 float Input::getRotationSpeed() const
 {
-    static const float speeds[4] = {0.5f, 0.8f, 1.0f, 1.5f};
+    static const float speeds[5] = {0.5f, 0.8f, 1.0f, 1.5f, 2.0f};
     return speeds[speedIndex];
 }
 

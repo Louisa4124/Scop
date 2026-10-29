@@ -10,17 +10,17 @@ void Input::updateRotationSpeed()
     if (!w)
         return;
 
-    // gerer '+' avec clavie + pave numerique
+    // gerer '+' avec clavier + pave numerique
     bool plusPressed =
         (glfwGetKey(w, GLFW_KEY_EQUAL) == GLFW_PRESS) ||
         (glfwGetKey(w, GLFW_KEY_KP_ADD) == GLFW_PRESS);
 
-    // gerer '-' avec clavie + pave numerique
+    // gerer '-' avec clavier + pave numerique
     bool minusPressed =
         (glfwGetKey(w, GLFW_KEY_MINUS) == GLFW_PRESS) ||
         (glfwGetKey(w, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS);
 
-    if (plusPressed && !plusKeyPressedLastFrame && speedIndex < 5)
+    if (plusPressed && !plusKeyPressedLastFrame && speedIndex < 6)
         ++speedIndex;
 
     if (minusPressed && !minusKeyPressedLastFrame && speedIndex > 0)
@@ -32,7 +32,7 @@ void Input::updateRotationSpeed()
 
 float Input::getRotationSpeed() const
 {
-    static const float speeds[6] = {0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f};
+    static const float speeds[7] = {0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f, 15.0f};
     return speeds[speedIndex];
 }
 

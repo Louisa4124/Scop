@@ -172,3 +172,4 @@ float v = (y - minY) / rangeY; // valeur de "v" normalisé entre 0.0 et 1.0
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/obj-file-format//obj-file-format.html
 - https://www.ronja-tutorials.com/post/008-planar-mapping/
 - https://webglfundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
+- https://cplusplus.com/articles/GwvU7k9E/

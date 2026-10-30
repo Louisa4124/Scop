@@ -91,3 +91,22 @@ float Input::processInputRotationX(Window &window)
 
     return 0.0f;
 }
+
+bool Input::processTextureToggle(Window &window)
+{
+    GLFWwindow *w = window.getNativeWindow();
+    if (!w)
+        return false;
+
+    bool tPressed = (glfwGetKey(w, GLFW_KEY_T) == GLFW_PRESS);
+    bool toggled = false;
+
+    if (tPressed && !tKeyPressedLastFrame)
+    {
+        textureModeEnabled = !textureModeEnabled;
+        toggled = true;
+    }
+
+    tKeyPressedLastFrame = tPressed;
+    return toggled;
+}

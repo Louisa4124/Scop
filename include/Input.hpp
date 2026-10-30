@@ -15,12 +15,16 @@ private:
     bool minusKeyPressedLastFrame = false;
     int speedIndex = 4; // 0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f
 
+    bool tKeyPressedLastFrame = false;
+    bool textureModeEnabled = false;
+
     void updateRotationSpeed();
     float getRotationSpeed() const;
 
 public:
     float processInputRotationY(Window &window);
     float processInputRotationX(Window &window);
+    bool processTextureToggle(Window &window);
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include <vector>
 #include <cmath>
 #include <array>
+#include <GLFW/glfw3.h>
 
 float WIDTH = 800.0f;
 float HEIGHT = 800.0f;
@@ -67,8 +68,8 @@ int main(int argc, char **argv)
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         // Paramètres de texture OpenGL
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -86,12 +87,38 @@ int main(int argc, char **argv)
     float rotationAngleY = 0.0f;
     float rotationAngleX = 0.0f;
     Input inputManager;
+    bool targetShowTexture = false; // on desactive par defaut la texture
+    float transitionFactor = 0.0f; 
+    float lastTime = glfwGetTime();
 
     // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
     std::array<float, 16> projectionMatrix = Matrix::createPerspective(45.0f, WIDTH / HEIGHT, 0.1f, 100.0f);
 
     while (!window.shouldClose())
     {
+        float currentTime = glfwGetTime();
+        float deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
+        if (inputManager.processTextureToggle(window))
+        {
+            targetShowTexture = !targetShowTexture;
+            std::cout << "Transition vers : " << (targetShowTexture ? "Texturé" : "Gris/Couleur") << std::endl;
+        }
+
+        // transition progressive du mode couleur a texture, ou l'inverse
+        float transitionSpeed = 2.0f;
+        if (targetShowTexture)
+        {
+            transitionFactor += transitionSpeed * deltaTime;
+            if (transitionFactor > 1.0f) transitionFactor = 1.0f;
+        }
+        else
+        {
+            transitionFactor -= transitionSpeed * deltaTime;
+            if (transitionFactor < 0.0f) transitionFactor = 0.0f;
+        }
+
         rotationAngleY += inputManager.processInputRotationY(window);
         rotationAngleX += inputManager.processInputRotationX(window);
 
@@ -122,11 +149,10 @@ int main(int argc, char **argv)
         std::array<float, 16> mvpMatrix = Matrix::multiply(projectionMatrix, modelMatrix);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mvpMatrix.data());
 
-        // Ajout des textures
-        bool hasTexture = (textureID != 0);
-        glUniform1i(glGetUniformLocation(shaderProgram.getID(), "u_UseTexture"), hasTexture);
+        glUniform1f(glGetUniformLocation(shaderProgram.getID(), "u_Transition"), transitionFactor);
 
-        if (hasTexture)
+        // Ajout des textures si il y en a
+        if (textureID != 0)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textureID);

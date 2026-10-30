@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    if (!ObjLoader::loadOBJ("./assets/42.obj", vertices, indices))
+    if (!ObjLoader::loadOBJ("./assets/fox.obj", vertices, indices))
         return -1;
     std::cout << "Nombre de sommets : " << vertices.size() / 5 << std::endl; // Mis à jour pour refléter les 5 floats (x,y,z,u,v)
     std::cout << "Nombre d'indices : " << indices.size() << std::endl;
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     std::vector<unsigned char> texturePixels;
 
     unsigned int textureID = 0;
-    if (loadBMP("./assets/mlp.bmp", texturePixels, width, height))
+    if (loadBMP("./assets/fox.bmp", texturePixels, width, height))
     {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -89,6 +89,8 @@ int main(int argc, char **argv)
     Input inputManager;
     bool targetShowTexture = false; // on desactive par defaut la texture
     float transitionFactor = 0.0f; 
+    
+    int colorMode = 0; // mode de couleur par défaut => gris
     float lastTime = glfwGetTime();
 
     // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
@@ -100,10 +102,17 @@ int main(int argc, char **argv)
         float deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
+        // activation de la texture
         if (inputManager.processTextureToggle(window))
         {
             targetShowTexture = !targetShowTexture;
             std::cout << "Transition vers : " << (targetShowTexture ? "Texturé" : "Gris/Couleur") << std::endl;
+        }
+
+        if (inputManager.processColorModeToggle(window))
+        {
+            colorMode = (colorMode + 1) % 4; // alterne entre 4 mode de couleur
+            std::cout << "Mode de couleur changé : " << colorMode << std::endl;
         }
 
         // transition progressive du mode couleur a texture, ou l'inverse
@@ -133,7 +142,7 @@ int main(int argc, char **argv)
             0.0f, 0.0f, -3.0f, 1.0f
         };
 
-        utils::glClearColorHex(0x000000);
+        utils::glClearColorHex(0x0A0A2E);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.use();
@@ -150,6 +159,7 @@ int main(int argc, char **argv)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mvpMatrix.data());
 
         glUniform1f(glGetUniformLocation(shaderProgram.getID(), "u_Transition"), transitionFactor);
+        glUniform1i(glGetUniformLocation(shaderProgram.getID(), "u_ColorMode"), colorMode);
 
         // Ajout des textures si il y en a
         if (textureID != 0)

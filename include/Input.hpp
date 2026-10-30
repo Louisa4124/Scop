@@ -25,6 +25,7 @@ public:
     float processInputRotationY(Window &window);
     float processInputRotationX(Window &window);
     bool processTextureToggle(Window &window);
+    bool processColorModeToggle(Window &window);
 };
 
 #endif

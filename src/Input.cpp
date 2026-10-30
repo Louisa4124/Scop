@@ -110,3 +110,16 @@ bool Input::processTextureToggle(Window &window)
     tKeyPressedLastFrame = tPressed;
     return toggled;
 }
+
+bool Input::processColorModeToggle(Window &window) {
+    static bool cKeyWasPressed = false;
+    bool cKeyIsPressed = (glfwGetKey(window.getNativeWindow(), GLFW_KEY_C) == GLFW_PRESS);
+    if (cKeyIsPressed && !cKeyWasPressed) {
+        cKeyWasPressed = true;
+        return true;
+    }
+    if (!cKeyIsPressed) {
+        cKeyWasPressed = false;
+    }
+    return false;
+}

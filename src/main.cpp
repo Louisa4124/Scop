@@ -11,10 +11,13 @@
 #include <cmath>
 #include <array>
 
+float WIDTH = 800.0f;
+float HEIGHT = 800.0f;
+
 int main(int argc, char **argv)
 {
     // Initialisation de la fenêtre GLFW et GLEW
-    Window window(800, 600, "Scop - OpenGL");
+    Window window(WIDTH, HEIGHT, "Scop - OpenGL");
 
     // Chargement et compilation des shaders depuis leurs fichiers
     Shader shaderProgram("./shaders/vertexShader.glsl", "./shaders/fragmentShader.glsl");
@@ -22,10 +25,8 @@ int main(int argc, char **argv)
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    if (!ObjLoader::loadOBJ("./assets/fox.obj", vertices, indices))
-    {
+    if (!ObjLoader::loadOBJ("./assets/42.obj", vertices, indices))
         return -1;
-    }
     std::cout << "Nombre de sommets : " << vertices.size() / 5 << std::endl; // Mis à jour pour refléter les 5 floats (x,y,z,u,v)
     std::cout << "Nombre d'indices : " << indices.size() << std::endl;
 
@@ -60,7 +61,7 @@ int main(int argc, char **argv)
     std::vector<unsigned char> texturePixels;
 
     unsigned int textureID = 0;
-    if (loadBMP("./assets/fox.bmp", texturePixels, width, height))
+    if (loadBMP("./assets/mlp.bmp", texturePixels, width, height))
     {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -86,6 +87,9 @@ int main(int argc, char **argv)
     float rotationAngleX = 0.0f;
     Input inputManager;
 
+    // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
+    std::array<float, 16> projectionMatrix = Matrix::createPerspective(45.0f, WIDTH / HEIGHT, 0.1f, 100.0f);
+
     while (!window.shouldClose())
     {
         rotationAngleY += inputManager.processInputRotationY(window);
@@ -93,6 +97,15 @@ int main(int argc, char **argv)
 
         std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
         std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
+
+        // Matrice de translation pour dezoomer l'objet 
+        std::array<float, 16> translationMatrix = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, -3.0f, 1.0f
+        };
+
         utils::glClearColorHex(0x000000);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -103,9 +116,11 @@ int main(int argc, char **argv)
 
         // N'envoie pas deux matrices séparées au même uniform.
         // Il faut les combiner puis envoyer le résultat une seule fois.
-        // Exemple (si tu as une fonction multiply) :
-        std::array<float, 16> modelMatrix = Matrix::multiply(rotationMatrixY, rotationMatrixX);
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, modelMatrix.data());
+        std::array<float, 16> rotMatrix = Matrix::multiply(rotationMatrixY, rotationMatrixX);
+        std::array<float, 16> modelMatrix = Matrix::multiply(translationMatrix, rotMatrix);
+
+        std::array<float, 16> mvpMatrix = Matrix::multiply(projectionMatrix, modelMatrix);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mvpMatrix.data());
 
         // Ajout des textures
         bool hasTexture = (textureID != 0);

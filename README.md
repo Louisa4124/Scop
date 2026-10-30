@@ -173,3 +173,4 @@ float v = (y - minY) / rangeY; // valeur de "v" normalisé entre 0.0 et 1.0
 - https://www.ronja-tutorials.com/post/008-planar-mapping/
 - https://webglfundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
 - https://cplusplus.com/articles/GwvU7k9E/
+- https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix//opengl-perspective-projection-matrix.html

@@ -1,5 +1,7 @@
 #include "../include/ObjLoader.hpp"
 #include <map>
+#include <algorithm>
+#include <cmath>
 
 // Structure pour relier les sommets avec leur textures
 struct VertexKey {
@@ -122,21 +124,88 @@ bool ObjLoader::loadOBJ(const std::string &filePath,
 
     float scaleFactor = (normalize && maxExtent > 0.0f) ? (targetScale / maxExtent) : 1.0f;
 
-    std::map<VertexKey, unsigned int> uniqueVertices;
+    bool hasRawUVs = !rawTexCoords.empty();
+
     outVertices.clear();
     outIndices.clear();
 
-    for (const auto &triangle : faces)
+    if (hasRawUVs)
     {
-        for (const auto &fv : triangle)
+        // cas ou le fichier a ses propres coord de textures u/v
+        std::map<VertexKey, unsigned int> uniqueVertices;
+
+        for (const auto &triangle : faces)
         {
-            VertexKey key = {fv.vIdx, fv.vtIdx};
-
-            if (uniqueVertices.find(key) == uniqueVertices.end())
+            for (const auto &fv : triangle)
             {
-                unsigned int newIndex = static_cast<unsigned int>(outVertices.size() / 5);
-                uniqueVertices[key] = newIndex;
+                VertexKey key = {fv.vIdx, fv.vtIdx};
 
+                if (uniqueVertices.find(key) == uniqueVertices.end())
+                {
+                    unsigned int newIndex = static_cast<unsigned int>(outVertices.size() / 5);
+                    uniqueVertices[key] = newIndex;
+
+                    float x = rawPositions[fv.vIdx * 3 + 0];
+                    float y = rawPositions[fv.vIdx * 3 + 1];
+                    float z = rawPositions[fv.vIdx * 3 + 2];
+
+                    outVertices.push_back((x - centerX) * scaleFactor);
+                    outVertices.push_back((y - centerY) * scaleFactor);
+                    outVertices.push_back((z - centerZ) * scaleFactor);
+
+                    if (fv.vtIdx >= 0 && (size_t)(fv.vtIdx * 2 + 1) < rawTexCoords.size())
+                    {
+                        outVertices.push_back(rawTexCoords[fv.vtIdx * 2 + 0]);
+                        outVertices.push_back(rawTexCoords[fv.vtIdx * 2 + 1]);
+                    }
+                    else
+                    {
+                        outVertices.push_back(0.0f);
+                        outVertices.push_back(0.0f);
+                    }
+                }
+
+                outIndices.push_back(uniqueVertices[key]);
+            }
+        }
+    }
+    else
+    {
+        // si le fichier obj n'a pas de u/v
+        unsigned int currentIndex = 0;
+
+        for (const auto &triangle : faces)
+        {
+            if (triangle.size() < 3) continue;
+
+            int v0Idx = triangle[0].vIdx;
+            int v1Idx = triangle[1].vIdx;
+            int v2Idx = triangle[2].vIdx;
+
+            float x0 = rawPositions[v0Idx * 3 + 0], y0 = rawPositions[v0Idx * 3 + 1], z0 = rawPositions[v0Idx * 3 + 2];
+            float x1 = rawPositions[v1Idx * 3 + 0], y1 = rawPositions[v1Idx * 3 + 1], z1 = rawPositions[v1Idx * 3 + 2];
+            float x2 = rawPositions[v2Idx * 3 + 0], y2 = rawPositions[v2Idx * 3 + 1], z2 = rawPositions[v2Idx * 3 + 2];
+
+            float ax = x1 - x0, ay = y1 - y0, az = z1 - z0;
+            float bx = x2 - x0, by = y2 - y0, bz = z2 - z0;
+
+            float nx = ay * bz - az * by;
+            float ny = az * bx - ax * bz;
+            float nz = ax * by - ay * bx;
+
+            float len = std::sqrt(nx * nx + ny * ny + nz * nz);
+            if (len > 0.0f) {
+                nx /= len; 
+                ny /= len; 
+                nz /= len;
+            }
+
+            float absNx = std::abs(nx);
+            float absNy = std::abs(ny);
+            float absNz = std::abs(nz);
+
+            for (const auto &fv : triangle)
+            {
                 float x = rawPositions[fv.vIdx * 3 + 0];
                 float y = rawPositions[fv.vIdx * 3 + 1];
                 float z = rawPositions[fv.vIdx * 3 + 2];
@@ -145,19 +214,28 @@ bool ObjLoader::loadOBJ(const std::string &filePath,
                 outVertices.push_back((y - centerY) * scaleFactor);
                 outVertices.push_back((z - centerZ) * scaleFactor);
 
-                if (fv.vtIdx >= 0 && (size_t)(fv.vtIdx * 2 + 1) < rawTexCoords.size())
-                {
-                    outVertices.push_back(rawTexCoords[fv.vtIdx * 2 + 0]);
-                    outVertices.push_back(rawTexCoords[fv.vtIdx * 2 + 1]);
-                }
-                else
-                {
-                    outVertices.push_back(0.0f);
-                    outVertices.push_back(0.0f);
-                }
-            }
+                float u = 0.0f, v = 0.0f;
 
-            outIndices.push_back(uniqueVertices[key]);
+                // Projection selon l'axe dominant de la normale de la face
+                if (absNz >= absNx && absNz >= absNy) {
+                    // Face avant / arrière (Plan XY)
+                    u = (sizeX > 0.0f) ? (x - minX) / sizeX : 0.0f;
+                    v = (sizeY > 0.0f) ? (y - minY) / sizeY : 0.0f;
+                } else if (absNx >= absNy && absNx >= absNz) {
+                    // Faces gauche / droite (Plan YZ)
+                    u = (sizeZ > 0.0f) ? (z - minZ) / sizeZ : 0.0f;
+                    v = (sizeY > 0.0f) ? (y - minY) / sizeY : 0.0f;
+                } else {
+                    // Faces dessus / dessous (Plan XZ)
+                    u = (sizeX > 0.0f) ? (x - minX) / sizeX : 0.0f;
+                    v = (sizeZ > 0.0f) ? (z - minZ) / sizeZ : 0.0f;
+                }
+
+                outVertices.push_back(u);
+                outVertices.push_back(v);
+
+                outIndices.push_back(currentIndex++);
+            }
         }
     }
 

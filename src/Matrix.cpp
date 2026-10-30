@@ -50,3 +50,17 @@ std::array<float, 16> Matrix::multiply(const std::array<float, 16> &a,
 
     return r;
 }
+
+std::array<float, 16> Matrix::createPerspective(float fovDegrees, float aspect, float nearPlane, float farPlane)
+{
+    float tanHalfFov = std::tan((fovDegrees * 0.5f) * (M_PI / 180.0f));
+    std::array<float, 16> res = {0.0f};
+
+    res[0]  = 1.0f / (aspect * tanHalfFov);
+    res[5]  = 1.0f / tanHalfFov;
+    res[10] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+    res[11] = -1.0f;
+    res[14] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+
+    return res;
+}

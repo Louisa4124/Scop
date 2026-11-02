@@ -65,7 +65,7 @@ void update(AppState &app)
     app.modelPosY += app.inputManager.processInputTranslationY(app.window) * deltaTime;
     app.modelPosZ += app.inputManager.processInputTranslationZ(app.window) * deltaTime;
 
-    utils::glClearColorHex(0x0A0A2E);
+    utils::glClearColorHex(0x2b2c41);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     app.shaderProgram.use();

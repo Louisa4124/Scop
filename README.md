@@ -23,14 +23,14 @@ This project has been created as part of the 42 curriculum by lboudjem
 
 ## Contrôles:
 
-* **`w` `a` `s` `d` `q` `e`** : Déplacer le modèle sur les axes x, y et z
-* **`↑` `↓` `→` `←` `0` `.`** : Tourner le modèle manuellement
-* **`1` `2` `3`** : Activer les rotations constantes du modèle
-* **`c`** : Changer le mode de couleur
-* **`t`** : Activer / désactiver la texture
-* **`m`** : Changer le mode d'affichage (fil de fer, remplissage, points)
-* **`+` `-`** : Augmenter / réduire la vitesse de rotation
-* **`Esc`** : Fermer la fenêtre 
+- **`w` `a` `s` `d` `q` `e`** : Déplacer le modèle sur les axes x, y et z
+- **`↑` `↓` `→` `←` `0` `.`** : Tourner le modèle manuellement
+- **`1` `2` `3`** : Activer les rotations constantes du modèle
+- **`c`** : Changer le mode de couleur
+- **`t`** : Activer / désactiver la texture
+- **`m`** : Changer le mode d'affichage (fil de fer, remplissage, points)
+- **`+` `-`** : Augmenter / réduire la vitesse de rotation
+- **`Esc`** : Fermer la fenêtre 
 
 # Fonctionnement 
 

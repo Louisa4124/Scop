@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 
     float modelPosX = 0.0f;
     float modelPosY = 0.0f;
-    float modelPosZ = -3.0f;
+    float modelPosZ = -2.0f;
 
     // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
     std::array<float, 16> projectionMatrix = Matrix::createPerspective(45.0f, WIDTH / HEIGHT, 0.1f, 100.0f);

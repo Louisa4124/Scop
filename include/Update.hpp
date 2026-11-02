@@ -18,18 +18,18 @@ struct AppState
     const std::array<float, 16> &projectionMatrix;
     unsigned int textureID;
     Input &inputManager;
+
+    float   rotationAngleY;
+    float   rotationAngleX;
+    float   rotationAngleZ;
+    float   modelPosX;
+    float   modelPosY;
+    float   modelPosZ;
     
-    float rotationAngleY;
-    float rotationAngleX;
-    float rotationAngleZ;
-    float modelPosX;
-    float modelPosY;
-    float modelPosZ;
-    
-    bool targetShowTexture;
-    float transitionFactor;
-    int colorMode;
-    float lastTime;
+    bool    targetShowTexture;
+    float   transitionFactor;
+    int     colorMode;
+    float   lastTime;
 };
 
 std::array<float, 16> computeModelMatrix(float rotationAngleY, float rotationAngleX, float rotationAngleZ,

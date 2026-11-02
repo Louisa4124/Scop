@@ -36,6 +36,9 @@ https://github.com/user-attachments/assets/d215a7db-0e75-4182-8885-4f6f3b695096
 - **`+` `-`** : Augmenter / réduire la vitesse de rotation
 - **`Esc`** : Fermer la fenêtre 
 
+![alt text](assets/image2.png)
+*Differents modes d'affichage du modèle*
+
 # Fonctionnement 
 
 ### Parsing

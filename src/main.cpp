@@ -16,10 +16,45 @@
 const float WIDTH = 800.0f;
 const float HEIGHT = 800.0f;
 
+void printHelp(const char *progName)
+{
+    std::cout << "\n******** Manuel d'utilisation de Scop *********\n\n";
+    std::cout << "Utilisation : \n" << progName << " <fichier.obj> [texture.bmp]\n";
+    std::cout << "PS: la texture est optionnel \n\n";
+    std::cout << "Commandes disponibles :\n";
+    std::cout << "- w, a, s, d, q, e : Déplacer le modèle sur les axes x, y et z\n";
+    std::cout << "- ↑, ↓, →, ←, 0, . : Tourner le modèle manuellement\n";
+    std::cout << "- 1, 2, 3 : Activer les rotations constantes du modèle\n";
+    std::cout << "- c : Changer le mode de couleur\n";
+    std::cout << "- t : Activer / désactiver la texture\n";
+    std::cout << "- m : Changer le mode d'affichage (fil de fer, remplissage, points)\n";
+    std::cout << "- +, - : Augmenter / réduire la vitesse de rotation\n";
+    std::cout << "- Esc : Fermer la fenêtre\n";
+}
+
 int main(int argc, char **argv)
 {
+    if (argc < 2)
+    {
+        std::cerr << "\nErreur : Aucun fichier `.obj` fourni.\n\n";
+        std::cerr << "Utilisation : \n" << argv[0] << " <fichier.obj> [texture.bmp]\n";
+        std::cerr << "PS: la texture est optionnel \n\n";
+        std::cerr << "Tapez '" << argv[0] << " -h' ou '" << argv[0] << " --help' pour afficher l'aide et les commandes.\n";
+        return 1;
+    }
+
+    std::string arg1 = argv[1];
+    if (arg1 == "-h" || arg1 == "--help")
+    {
+        printHelp(argv[0]);
+        return 0;
+    }
+
+    std::string objPath = argv[1];
+    std::string bmpPath = (argc >= 3) ? argv[2] : "";
+
     // Initialisation de la fenêtre GLFW et GLEW
-    Window window(WIDTH, HEIGHT, "Scop - OpenGL");
+    Window window(WIDTH, HEIGHT, "Scop");
 
     // Chargement et compilation des shaders depuis leurs fichiers
     Shader shaderProgram("./shaders/vertexShader.glsl", "./shaders/fragmentShader.glsl");
@@ -27,8 +62,11 @@ int main(int argc, char **argv)
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    if (!ObjLoader::loadOBJ("./assets/fox.obj", vertices, indices))
+    if (!ObjLoader::loadOBJ(objPath.c_str(), vertices, indices))
+    {
+        std::cerr << "Erreur : Impossible de charger le fichier OBJ : " << objPath << std::endl;
         return -1;
+    }
 
     // Vertex Buffer Object (VBO) => Stocke les donnees
     //                            => permet d'envoyer autant de donnees que possible a la carte graphique
@@ -58,7 +96,7 @@ int main(int argc, char **argv)
     std::vector<unsigned char> texturePixels;
 
     unsigned int textureID = 0;
-    if (loadBMP("./assets/fox.bmp", texturePixels, width, height))
+    if (!bmpPath.empty() && loadBMP(bmpPath.c_str(), texturePixels, width, height))
     {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);

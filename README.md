@@ -1,5 +1,5 @@
 # Scop
-This project has been created as part of the 42 curriculum by lboudjem
+*This project has been created as part of the 42 curriculum by lboudjem*
 
 # Description
 
@@ -169,3 +169,9 @@ Au lieu de lire les `vt` dans le fichier, le programme calcule les coordonnées 
 - https://webglfundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
 - https://cplusplus.com/articles/GwvU7k9E/
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix//opengl-perspective-projection-matrix.html
+
+### 3D models:
+- https://poly.pizza/m/66d-mKAgF17
+- https://poly.pizza/m/0OToIgkcVM7
+- https://poly.pizza/m/10u8FYPC5Br
+- https://poly.pizza/m/d2QPCNGeGp3

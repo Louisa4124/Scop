@@ -5,6 +5,10 @@
 
 **Scop** est un moteur de rendu 3D minimaliste développé en **C++** et **OpenGL**. Ce projet a pour objectif d'implémenter les fondements graphiques 3D de bas niveau, allant du chargement de fichiers d'objets (`.obj`) et de textures jusqu'à la gestion des shaders et des transformations matricielles.
 
+<video controls src="assets/vid1.webm" title="Boat"></video>
+
+![alt text](assets/image.png)
+
 # Instructions
 
 #### Installation:
@@ -122,7 +126,7 @@ f 1/1/1 2/2/1 3/3/1
 
 Donc, si on suit la structure des faces avec textures donnée plus haut, on a :
 
-$$\text{Indice\_Position} \;/\; \text{Indice\_Texture (UV)} \;/\; \text{Indice\_Normale}$$
+`Indice_Position` / `Indice_Texture (UV)` / `Indice_Normale`
 
 1. Premier coin : **1/1/1**
    -  Le sommet géométrique (v) est le n°1 (sa position 3D dans l'espace).
@@ -167,6 +171,7 @@ Au lieu de lire les `vt` dans le fichier, le programme calcule les coordonnées 
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/obj-file-format//obj-file-format.html
 - https://www.ronja-tutorials.com/post/008-planar-mapping/
 - https://webglfundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
+- https://www.geeksforgeeks.org/cpp/cpp-program-to-rotate-matrix-elements/
 - https://cplusplus.com/articles/GwvU7k9E/
 - https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix//opengl-perspective-projection-matrix.html
 

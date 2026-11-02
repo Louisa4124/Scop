@@ -30,6 +30,7 @@ This project has been created as part of the 42 curriculum by lboudjem
 * **`t`** : Activer / désactiver la texture
 * **`m`** : Changer le mode d'affichage (fil de fer, remplissage, points)
 * **`+` `-`** : Augmenter / réduire la vitesse de rotation
+* **`Esc`** : Fermer la fenêtre 
 
 # Fonctionnement 
 

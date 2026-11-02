@@ -6,26 +6,32 @@ class Window;
 class Input
 {
 private:
-    bool aKeyPressedLastFrame = false;
-    bool sKeyPressedLastFrame = false;
-    bool rotationToggledY = false;
-    bool rotationToggledX = false;
+    // Rotations automatiques
+    bool    oneKeyPressedLastFrame = false;
+    bool    twoKeyPressedLastFrame = false;
+    bool    threeKeyPressedLastFrame = false;
+    bool    rotationToggledY = false;
+    bool    rotationToggledX = false;
+    bool    rotationToggledZ = false;
 
-    bool plusKeyPressedLastFrame = false;
-    bool minusKeyPressedLastFrame = false;
-    int speedIndex = 4; // 0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f, 15.0f
+    // Gestion de la vitesse de rotation
+    bool    plusKeyPressedLastFrame = false;
+    bool    minusKeyPressedLastFrame = false;
+    int     speedIndex = 4; // 0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f, 15.0f
 
-    bool tKeyPressedLastFrame = false;
-    bool textureModeEnabled = false;
+    // Activer/desac la texture
+    bool    tKeyPressedLastFrame = false;
+    bool    textureModeEnabled = false;
 
-    void updateRotationSpeed();
-    float getRotationSpeed() const;
+    void    updateRotationSpeed();
+    float   getRotationSpeed() const;
 
 public:
-    float processInputRotationY(Window &window);
-    float processInputRotationX(Window &window);
-    bool processTextureToggle(Window &window);
-    bool processColorModeToggle(Window &window);
+    float   processInputRotationY(Window &window);
+    float   processInputRotationX(Window &window);
+    float   processInputRotationZ(Window &window);
+    bool    processTextureToggle(Window &window);
+    bool    processColorModeToggle(Window &window);
 };
 
 #endif

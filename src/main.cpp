@@ -77,6 +77,7 @@ int main(int argc, char **argv)
 
     float rotationAngleY = 0.0f;
     float rotationAngleX = 0.0f;
+    float rotationAngleZ = 0.0f;
     Input inputManager;
     bool targetShowTexture = false; // on desactive par defaut la texture
     float transitionFactor = 0.0f; 
@@ -115,9 +116,11 @@ int main(int argc, char **argv)
 
         rotationAngleY += inputManager.processInputRotationY(window);
         rotationAngleX += inputManager.processInputRotationX(window);
+        rotationAngleZ += inputManager.processInputRotationZ(window);
 
         std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
         std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
+        std::array<float, 16> rotationMatrixZ = Matrix::createRotationZ(rotationAngleZ);
 
         // Matrice de translation pour dezoomer l'objet 
         std::array<float, 16> translationMatrix = Matrix::createTranslationZ(-3.0f);
@@ -130,9 +133,8 @@ int main(int argc, char **argv)
         // Récupération de l'emplacement de u_Model et envoi de la matrice
         GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
 
-        // N'envoie pas deux matrices séparées au même uniform.
-        // Il faut les combiner puis envoyer le résultat une seule fois.
-        std::array<float, 16> rotMatrix = Matrix::multiply(rotationMatrixY, rotationMatrixX);
+        std::array<float, 16> rotXY = Matrix::multiply(rotationMatrixY, rotationMatrixX);
+        std::array<float, 16> rotMatrix = Matrix::multiply(rotXY, rotationMatrixZ);
         std::array<float, 16> modelMatrix = Matrix::multiply(translationMatrix, rotMatrix);
 
         std::array<float, 16> mvpMatrix = Matrix::multiply(projectionMatrix, modelMatrix);

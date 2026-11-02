@@ -50,10 +50,10 @@ float Input::processInputRotationY(Window &window)
         return 0.0f;
     }
 
-    bool aPressed = (glfwGetKey(w, GLFW_KEY_A) == GLFW_PRESS);
-    if (aPressed && !aKeyPressedLastFrame)
+    bool onePressed = (glfwGetKey(w, GLFW_KEY_1) == GLFW_PRESS || glfwGetKey(w, GLFW_KEY_KP_1) == GLFW_PRESS);
+    if (onePressed && !oneKeyPressedLastFrame)
         rotationToggledY = !rotationToggledY;
-    aKeyPressedLastFrame = aPressed;
+    oneKeyPressedLastFrame = onePressed;
 
     bool leftPressed = (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS);
     bool rightPressed = (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS);
@@ -75,10 +75,10 @@ float Input::processInputRotationX(Window &window)
 
     updateRotationSpeed();
 
-    bool sPressed = (glfwGetKey(w, GLFW_KEY_S) == GLFW_PRESS);
-    if (sPressed && !sKeyPressedLastFrame)
+    bool twoPressed = (glfwGetKey(w, GLFW_KEY_2) == GLFW_PRESS || glfwGetKey(w, GLFW_KEY_KP_2) == GLFW_PRESS);
+    if (twoPressed && !twoKeyPressedLastFrame)
         rotationToggledX = !rotationToggledX;
-    sKeyPressedLastFrame = sPressed;
+    twoKeyPressedLastFrame = twoPressed;
 
     bool upPressed = (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS);
     bool downPressed = (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS);
@@ -87,6 +87,31 @@ float Input::processInputRotationX(Window &window)
         return -getRotationSpeed();
 
     if (upPressed || rotationToggledX)
+        return getRotationSpeed();
+
+    return 0.0f;
+}
+
+float Input::processInputRotationZ(Window &window)
+{
+    GLFWwindow *w = glfwGetCurrentContext();
+    if (!w)
+        return 0.0f;
+
+    updateRotationSpeed();
+
+    bool threePressed = (glfwGetKey(w, GLFW_KEY_3) == GLFW_PRESS || glfwGetKey(w, GLFW_KEY_KP_3) == GLFW_PRESS);
+    if (threePressed && !threeKeyPressedLastFrame)
+        rotationToggledZ = !rotationToggledZ;
+    threeKeyPressedLastFrame = threePressed;
+
+    bool zeroPressed = (glfwGetKey(w, GLFW_KEY_KP_0) == GLFW_PRESS);
+    bool pointPressed = (glfwGetKey(w, GLFW_KEY_KP_DECIMAL) == GLFW_PRESS);
+
+    if (zeroPressed)
+        return -getRotationSpeed();
+
+    if (pointPressed || rotationToggledZ)
         return getRotationSpeed();
 
     return 0.0f;

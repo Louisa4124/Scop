@@ -31,6 +31,57 @@ std::array<float, 16> Matrix::createRotationX(float angleDeg)
     };
 }
 
+std::array<float, 16> Matrix::createRotationZ(float angleDegrees)
+{
+    float angleRad = angleDegrees * (static_cast<float>(M_PI) / 180.0f);
+    float c = std::cos(angleRad);
+    float s = std::sin(angleRad);
+
+    // Colonne-major
+    return {
+         c,    s, 0.0f, 0.0f,
+        -s,    c, 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+    };
+}
+
+std::array<float, 16> Matrix::createTranslationX(float x)
+{
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    res[12] = x;
+    return res;
+}
+
+std::array<float, 16> Matrix::createTranslationY(float y)
+{
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    res[13] = y;
+    return res;
+}
+
+std::array<float, 16> Matrix::createTranslationZ(float z)
+{
+    std::array<float, 16> res = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    res[14] = z;
+    return res;
+}
+
 std::array<float, 16> Matrix::multiply(const std::array<float, 16> &a,
                                        const std::array<float, 16> &b)
 {

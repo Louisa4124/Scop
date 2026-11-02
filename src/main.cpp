@@ -50,6 +50,8 @@ int main(int argc, char **argv)
         }
         bmpPath = arg2;
     }
+    else
+        bmpPath = findDefaultTexture(objPath);
 
     // Initialisation de la fenêtre GLFW et GLEW
     Window window(WIDTH, HEIGHT, "Scop");

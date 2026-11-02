@@ -174,7 +174,7 @@ float Input::processInputTranslationZ(Window &window)
     return 0.0f;
 }
 
-bool Input::processTextureToggle(Window &window)
+bool Input::changeTexture(Window &window)
 {
     GLFWwindow *w = window.getNativeWindow();
     if (!w)
@@ -193,7 +193,7 @@ bool Input::processTextureToggle(Window &window)
     return toggled;
 }
 
-bool Input::processColorModeToggle(Window &window) {
+bool Input::changeColor(Window &window) {
     static bool cKeyWasPressed = false;
     bool cKeyIsPressed = (glfwGetKey(window.getNativeWindow(), GLFW_KEY_C) == GLFW_PRESS);
     if (cKeyIsPressed && !cKeyWasPressed) {
@@ -202,6 +202,23 @@ bool Input::processColorModeToggle(Window &window) {
     }
     if (!cKeyIsPressed) {
         cKeyWasPressed = false;
+    }
+    return false;
+}
+
+bool Input::changeDisplayMode(Window &window)
+{
+    static bool mKeyPressedLastFrame = false;
+    bool currentPressed = (glfwGetKey(window.getNativeWindow(), GLFW_KEY_M) == GLFW_PRESS);
+
+    if (currentPressed && !mKeyPressedLastFrame)
+    {
+        mKeyPressedLastFrame = true;
+        return true;
+    }
+    if (!currentPressed)
+    {
+        mKeyPressedLastFrame = false;
     }
     return false;
 }

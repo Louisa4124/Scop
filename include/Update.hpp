@@ -30,7 +30,9 @@ struct AppState
     float   transitionFactor;
     int     colorMode;
     float   lastTime;
+    int     displayMode = 0;
 };
+
 
 std::array<float, 16> computeModelMatrix(float rotationAngleY, float rotationAngleX, float rotationAngleZ,
                                        float modelPosX, float modelPosY, float modelPosZ);

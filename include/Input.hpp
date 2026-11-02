@@ -35,8 +35,10 @@ public:
     float   processInputTranslationY(Window &window);
     float   processInputTranslationZ(Window &window);
 
-    bool    processTextureToggle(Window &window);
-    bool    processColorModeToggle(Window &window);
+    bool    changeTexture(Window &window);
+    bool    changeColor(Window &window);
+
+    bool    changeDisplayMode(Window &window);
 };
 
 #endif

@@ -36,11 +36,14 @@ void update(AppState &app)
     app.lastTime = currentTime;
 
     // activation de la texture
-    if (app.inputManager.processTextureToggle(app.window))
+    if (app.inputManager.changeTexture(app.window))
         app.targetShowTexture = !app.targetShowTexture;
 
-    if (app.inputManager.processColorModeToggle(app.window))
+    if (app.inputManager.changeColor(app.window))
         app.colorMode = (app.colorMode + 1) % 4; // alterne entre 4 mode de couleur
+
+    if (app.inputManager.changeDisplayMode(app.window))
+        app.displayMode = (app.displayMode + 1) % 3;
 
     // transition progressive du mode couleur a texture, ou l'inverse
     float transitionSpeed = 2.0f;
@@ -94,7 +97,12 @@ void update(AppState &app)
     // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
     // GL_FILL : l'interieur est plein
     // GL_POINT : dessines uniquement les vertices
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (app.displayMode == 0)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    else if (app.displayMode == 1)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 
     // Afficher un objet
     app.vao.bind();

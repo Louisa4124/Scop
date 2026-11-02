@@ -5,7 +5,7 @@
 
 **Scop** est un moteur de rendu 3D minimaliste développé en **C++** et **OpenGL**. Ce projet a pour objectif d'implémenter les fondements graphiques 3D de bas niveau, allant du chargement de fichiers d'objets (`.obj`) et de textures jusqu'à la gestion des shaders et des transformations matricielles.
 
-[![Demo](assets/image.png)]
+![alt text](assets/image.png)
 
 https://github.com/user-attachments/assets/d215a7db-0e75-4182-8885-4f6f3b695096
 

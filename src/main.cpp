@@ -39,9 +39,6 @@ int main(int argc, char **argv)
     vao.bind();
 
     // 1. Copier les sommets dans un tampon VBO pour qu’OpenGL les utilise
-    // GL_STATIC_DRAW : les données ne seront pas modifiées (ou rarement)
-    // GL_DYNAMIC_DRAW : les données seront souvent modifiées
-    // GL_STREAM_DRAW : les données seront modifiées à chaque affichage.
     VertexBuffer vbo(vertices.data(), vertices.size() * sizeof(float));
 
     // 2. Copier les indices dans un tampon EBO

@@ -27,13 +27,14 @@ bool loadBMP(const char* filepath, std::vector<unsigned char>& pixels, int& widt
     height = *reinterpret_cast<int*>(&header[22]);
     short bpp = *reinterpret_cast<short*>(&header[28]);
 
-    if (bpp != 24)
+    if (bpp != 24 && bpp != 32)
     {
-        std::cerr << "Erreur : Seuls les fichiers BMP 24-bits sont pris en charge (celui-ci est en " << bpp << " bits)." << std::endl;
+        std::cerr << "Erreur : Seuls les fichiers BMP 24-bits et 32-bits sont pris en charge (celui-ci est en " << bpp << " bits)." << std::endl;
         return false;
     }
 
-    int rowSize = ((width * 3 + 3) / 4) * 4;
+    int bytesPerPixel = bpp / 8;
+    int rowSize = ((width * bytesPerPixel + 3) / 4) * 4;
     std::vector<unsigned char> bmpData(rowSize * std::abs(height));
 
     file.read(reinterpret_cast<char*>(bmpData.data()), bmpData.size());
@@ -46,12 +47,12 @@ bool loadBMP(const char* filepath, std::vector<unsigned char>& pixels, int& widt
         int srcRow = (height > 0) ? (std::abs(height) - 1 - y) : y;
         for (int x = 0; x < width; ++x)
         {
-            int srcIndex = srcRow * rowSize + x * 3;
+            int srcIndex = srcRow * rowSize + x * bytesPerPixel;
             int destIndex = (y * width + x) * 3;
 
-            pixels[destIndex + 0] = bmpData[srcIndex + 2];
-            pixels[destIndex + 1] = bmpData[srcIndex + 1];
-            pixels[destIndex + 2] = bmpData[srcIndex + 0];
+            pixels[destIndex + 0] = bmpData[srcIndex + 2]; // R
+            pixels[destIndex + 1] = bmpData[srcIndex + 1]; // g
+            pixels[destIndex + 2] = bmpData[srcIndex + 0]; // B
         }
     }
 

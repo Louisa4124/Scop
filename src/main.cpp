@@ -32,6 +32,15 @@ void printHelp(const char *progName)
     std::cout << "- Esc : Fermer la fenêtre\n";
 }
 
+bool hasEnding(const std::string &fullString, const std::string &ending)
+{
+    if (fullString.length() >= ending.length())
+    {
+        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+    }
+    return false;
+}
+
 int main(int argc, char **argv)
 {
     if (argc < 2)
@@ -50,8 +59,26 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    if (!hasEnding(arg1, ".obj") && !hasEnding(arg1, ".OBJ"))
+    {
+        std::cerr << "\nErreur : Seul les fichiers .obj sont acceptés.\n\n";
+        std::cerr << "Utilisation : \n" << argv[0] << " <fichier.obj> [texture.bmp]\n";
+        return 1;
+    }
+
     std::string objPath = argv[1];
-    std::string bmpPath = (argc >= 3) ? argv[2] : "";
+    std::string bmpPath = "";
+
+    if (argc >= 3)
+    {
+        std::string arg2 = argv[2];
+        if (!hasEnding(arg2, ".bmp") && !hasEnding(arg2, ".BMP"))
+        {
+            std::cerr << "\nErreur : Seul les fichiers .bmp sont acceptés pour les textures.\n";
+            return 1;
+        }
+        bmpPath = arg2;
+    }
 
     // Initialisation de la fenêtre GLFW et GLEW
     Window window(WIDTH, HEIGHT, "Scop");

@@ -117,6 +117,63 @@ float Input::processInputRotationZ(Window &window)
     return 0.0f;
 }
 
+float Input::processInputTranslationX(Window &window)
+{
+    GLFWwindow *w = glfwGetCurrentContext();
+    if (!w)
+        return 0.0f;
+
+    float speed = getRotationSpeed() * 0.5f;
+
+    bool dPressed = (glfwGetKey(w, GLFW_KEY_D) == GLFW_PRESS);
+    bool aPressed = (glfwGetKey(w, GLFW_KEY_A) == GLFW_PRESS);
+
+    if (dPressed) 
+        return speed;  // Droite (+X)
+    if (aPressed)
+        return -speed; // Gauche (-X)
+
+    return 0.0f;
+}
+
+float Input::processInputTranslationY(Window &window)
+{
+    GLFWwindow *w = glfwGetCurrentContext();
+    if (!w)
+        return 0.0f;
+
+    float speed = getRotationSpeed() * 0.5f;
+
+    bool ePressed = (glfwGetKey(w, GLFW_KEY_E) == GLFW_PRESS);
+    bool qPressed = (glfwGetKey(w, GLFW_KEY_Q) == GLFW_PRESS);
+
+    if (ePressed) 
+        return speed;  // Monter (+Y)
+    if (qPressed) 
+        return -speed; // Descendre (-Y)
+
+    return 0.0f;
+}
+
+float Input::processInputTranslationZ(Window &window)
+{
+    GLFWwindow *w = glfwGetCurrentContext();
+    if (!w)
+        return 0.0f;
+
+    float speed = getRotationSpeed() * 0.5f;
+
+    bool wPressed = (glfwGetKey(w, GLFW_KEY_W) == GLFW_PRESS);
+    bool sPressed = (glfwGetKey(w, GLFW_KEY_S) == GLFW_PRESS);
+
+    if (wPressed) 
+        return speed;  // Avancer (+Z)
+    if (sPressed) 
+        return -speed; // Reculer (-Z)
+
+    return 0.0f;
+}
+
 bool Input::processTextureToggle(Window &window)
 {
     GLFWwindow *w = window.getNativeWindow();

@@ -30,6 +30,11 @@ public:
     float   processInputRotationY(Window &window);
     float   processInputRotationX(Window &window);
     float   processInputRotationZ(Window &window);
+
+    float   processInputTranslationX(Window &window);
+    float   processInputTranslationY(Window &window);
+    float   processInputTranslationZ(Window &window);
+
     bool    processTextureToggle(Window &window);
     bool    processColorModeToggle(Window &window);
 };

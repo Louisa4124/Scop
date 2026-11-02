@@ -80,10 +80,18 @@ int main(int argc, char **argv)
     float rotationAngleZ = 0.0f;
     Input inputManager;
     bool targetShowTexture = false; // on desactive par defaut la texture
-    float transitionFactor = 0.0f; 
-    
+    float transitionFactor = 0.0f;
+
     int colorMode = 0; // mode de couleur par défaut => gris
     float lastTime = glfwGetTime();
+
+    float processInputTranslationX(Window & window);
+    float processInputTranslationY(Window & window);
+    float processInputTranslationZ(Window & window);
+
+    float modelPosX = 0.0f;
+    float modelPosY = 0.0f;
+    float modelPosZ = -3.0f;
 
     // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
     std::array<float, 16> projectionMatrix = Matrix::createPerspective(45.0f, WIDTH / HEIGHT, 0.1f, 100.0f);
@@ -106,24 +114,23 @@ int main(int argc, char **argv)
         if (targetShowTexture)
         {
             transitionFactor += transitionSpeed * deltaTime;
-            if (transitionFactor > 1.0f) transitionFactor = 1.0f;
+            if (transitionFactor > 1.0f)
+                transitionFactor = 1.0f;
         }
         else
         {
             transitionFactor -= transitionSpeed * deltaTime;
-            if (transitionFactor < 0.0f) transitionFactor = 0.0f;
+            if (transitionFactor < 0.0f)
+                transitionFactor = 0.0f;
         }
 
         rotationAngleY += inputManager.processInputRotationY(window);
         rotationAngleX += inputManager.processInputRotationX(window);
         rotationAngleZ += inputManager.processInputRotationZ(window);
-
-        std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
-        std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
-        std::array<float, 16> rotationMatrixZ = Matrix::createRotationZ(rotationAngleZ);
-
-        // Matrice de translation pour dezoomer l'objet 
-        std::array<float, 16> translationMatrix = Matrix::createTranslationZ(-3.0f);
+        
+        modelPosX += inputManager.processInputTranslationX(window) * deltaTime;
+        modelPosY += inputManager.processInputTranslationY(window) * deltaTime;
+        modelPosZ += inputManager.processInputTranslationZ(window) * deltaTime;
 
         utils::glClearColorHex(0x0A0A2E);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -133,9 +140,26 @@ int main(int argc, char **argv)
         // Récupération de l'emplacement de u_Model et envoi de la matrice
         GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
 
+        // on cree les matrices de rotations
+        std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
+        std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
+        std::array<float, 16> rotationMatrixZ = Matrix::createRotationZ(rotationAngleZ);
+
+        // on cree les matrices de translations
+        std::array<float, 16> translationMatrixX = Matrix::createTranslationX(modelPosX);
+        std::array<float, 16> translationMatrixY = Matrix::createTranslationY(modelPosY);
+        std::array<float, 16> translationMatrixZ = Matrix::createTranslationZ(modelPosZ);
+
+        // on les combine
+        std::array<float, 16> transXY = Matrix::multiply(translationMatrixX, translationMatrixY);
+        std::array<float, 16> transMatrix = Matrix::multiply(transXY, translationMatrixZ);
+
+        // on combine les rotations
         std::array<float, 16> rotXY = Matrix::multiply(rotationMatrixY, rotationMatrixX);
         std::array<float, 16> rotMatrix = Matrix::multiply(rotXY, rotationMatrixZ);
-        std::array<float, 16> modelMatrix = Matrix::multiply(translationMatrix, rotMatrix);
+
+        // matrice finale: rotation + translation
+        std::array<float, 16> modelMatrix = Matrix::multiply(transMatrix, rotMatrix);
 
         std::array<float, 16> mvpMatrix = Matrix::multiply(projectionMatrix, modelMatrix);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mvpMatrix.data());

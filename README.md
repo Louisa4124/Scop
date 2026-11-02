@@ -3,22 +3,33 @@ This project has been created as part of the 42 curriculum by lboudjem
 
 # Description
 
+**Scop** est un moteur de rendu 3D minimaliste développé en **C++** et **OpenGL**. Ce projet a pour objectif d'implémenter les fondements graphiques 3D de bas niveau, allant du chargement de fichiers d'objets (`.obj`) et de textures jusqu'à la gestion des shaders et des transformations matricielles.
+
 # Instructions
 
-Installation:
+#### Installation:
 
     git clone git@github.com:Louisa4124/Scop.git
     cd ./scop
     make
 
-Utilisation:
+#### Utilisation:
 
     ./scop [fichier .obj]
 
-Exemple:
+#### Exemple:
 
     ./scop ./assets/42.obj
 
+## Contrôles:
+
+* **`w` `a` `s` `d` `q` `e`** : Déplacer le modèle sur les axes x, y et z
+* **`↑` `↓` `→` `←` `0` `.`** : Tourner le modèle manuellement
+* **`1` `2` `3`** : Activer les rotations constantes du modèle
+* **`c`** : Changer le mode de couleur
+* **`t`** : Activer / désactiver la texture
+* **`m`** : Changer le mode d'affichage (fil de fer, remplissage, points)
+* **`+` `-`** : Augmenter / réduire la vitesse de rotation
 
 # Fonctionnement 
 
@@ -148,23 +159,6 @@ Au lieu de lire les `vt` dans le fichier, le programme calcule les coordonnées 
 
    $$u = \frac{x - X_{min}}{X_{max} - X_{min}}$$
    $$v = \frac{y - Y_{min}}{Y_{max} - Y_{min}}$$
-
-#### Exemple d'implémentation 
-
-```cpp
-// 1. On calcul d'abord es min/max sur les sommets
-// ...
-
-// 2. Pour chaque sommet on fait :
-float rangeX = (maxX - minX > 0.0f) ? (maxX - minX) : 1.0f;
-float rangeY = (maxY - minY > 0.0f) ? (maxY - minY) : 1.0f;
-
-float u = (x - minX) / rangeX; // valeur de "u" normalisé entre 0.0 et 1.0
-float v = (y - minY) / rangeY; // valeur de "v" normalisé entre 0.0 et 1.0
-
-// Ces valeurs (u, v) sont ensuite injectées dans le VBO 
-// pour être transmises au Vertex Shader.
-```
 
 # Resources
 

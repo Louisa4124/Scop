@@ -13,7 +13,7 @@ private:
 
     bool plusKeyPressedLastFrame = false;
     bool minusKeyPressedLastFrame = false;
-    int speedIndex = 4; // 0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f
+    int speedIndex = 4; // 0.5f, 0.8f, 1.0f, 1.5f, 2.0f, 4.0f, 15.0f
 
     bool tKeyPressedLastFrame = false;
     bool textureModeEnabled = false;

@@ -6,14 +6,15 @@
 #include "../include/ObjLoader.hpp"
 #include "../include/BmpLoader.hpp"
 #include "../include/Input.hpp"
+#include "../include/Update.hpp"
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <array>
 #include <GLFW/glfw3.h>
 
-float WIDTH = 800.0f;
-float HEIGHT = 800.0f;
+const float WIDTH = 800.0f;
+const float HEIGHT = 800.0f;
 
 int main(int argc, char **argv)
 {
@@ -85,10 +86,6 @@ int main(int argc, char **argv)
     int colorMode = 0; // mode de couleur par défaut => gris
     float lastTime = glfwGetTime();
 
-    float processInputTranslationX(Window & window);
-    float processInputTranslationY(Window & window);
-    float processInputTranslationZ(Window & window);
-
     float modelPosX = 0.0f;
     float modelPosY = 0.0f;
     float modelPosZ = -3.0f;
@@ -96,98 +93,16 @@ int main(int argc, char **argv)
     // matrice de projection perspective (pouur ne pas avoir une image distordu a cause du ratio)
     std::array<float, 16> projectionMatrix = Matrix::createPerspective(45.0f, WIDTH / HEIGHT, 0.1f, 100.0f);
 
+    // Initialisation de la structure d'état pour la fonction update
+    AppState appState = {
+        window, shaderProgram, vao, ebo, projectionMatrix, textureID,
+        inputManager, rotationAngleY, rotationAngleX, rotationAngleZ,
+        modelPosX, modelPosY, modelPosZ,
+        targetShowTexture, transitionFactor, colorMode, lastTime
+    };
+
     while (!window.shouldClose())
-    {
-        float currentTime = glfwGetTime();
-        float deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-
-        // activation de la texture
-        if (inputManager.processTextureToggle(window))
-            targetShowTexture = !targetShowTexture;
-
-        if (inputManager.processColorModeToggle(window))
-            colorMode = (colorMode + 1) % 4; // alterne entre 4 mode de couleur
-
-        // transition progressive du mode couleur a texture, ou l'inverse
-        float transitionSpeed = 2.0f;
-        if (targetShowTexture)
-        {
-            transitionFactor += transitionSpeed * deltaTime;
-            if (transitionFactor > 1.0f)
-                transitionFactor = 1.0f;
-        }
-        else
-        {
-            transitionFactor -= transitionSpeed * deltaTime;
-            if (transitionFactor < 0.0f)
-                transitionFactor = 0.0f;
-        }
-
-        rotationAngleY += inputManager.processInputRotationY(window);
-        rotationAngleX += inputManager.processInputRotationX(window);
-        rotationAngleZ += inputManager.processInputRotationZ(window);
-        
-        modelPosX += inputManager.processInputTranslationX(window) * deltaTime;
-        modelPosY += inputManager.processInputTranslationY(window) * deltaTime;
-        modelPosZ += inputManager.processInputTranslationZ(window) * deltaTime;
-
-        utils::glClearColorHex(0x0A0A2E);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        shaderProgram.use();
-
-        // Récupération de l'emplacement de u_Model et envoi de la matrice
-        GLint modelLoc = glGetUniformLocation(shaderProgram.getID(), "u_Model");
-
-        // on cree les matrices de rotations
-        std::array<float, 16> rotationMatrixY = Matrix::createRotationY(-90.0f + rotationAngleY);
-        std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
-        std::array<float, 16> rotationMatrixZ = Matrix::createRotationZ(rotationAngleZ);
-
-        // on cree les matrices de translations
-        std::array<float, 16> translationMatrixX = Matrix::createTranslationX(modelPosX);
-        std::array<float, 16> translationMatrixY = Matrix::createTranslationY(modelPosY);
-        std::array<float, 16> translationMatrixZ = Matrix::createTranslationZ(modelPosZ);
-
-        // on les combine
-        std::array<float, 16> transXY = Matrix::multiply(translationMatrixX, translationMatrixY);
-        std::array<float, 16> transMatrix = Matrix::multiply(transXY, translationMatrixZ);
-
-        // on combine les rotations
-        std::array<float, 16> rotXY = Matrix::multiply(rotationMatrixY, rotationMatrixX);
-        std::array<float, 16> rotMatrix = Matrix::multiply(rotXY, rotationMatrixZ);
-
-        // matrice finale: rotation + translation
-        std::array<float, 16> modelMatrix = Matrix::multiply(transMatrix, rotMatrix);
-
-        std::array<float, 16> mvpMatrix = Matrix::multiply(projectionMatrix, modelMatrix);
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, mvpMatrix.data());
-
-        glUniform1f(glGetUniformLocation(shaderProgram.getID(), "u_Transition"), transitionFactor);
-        glUniform1i(glGetUniformLocation(shaderProgram.getID(), "u_ColorMode"), colorMode);
-
-        // Ajout des textures si il y en a
-        if (textureID != 0)
-        {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, textureID);
-            glUniform1i(glGetUniformLocation(shaderProgram.getID(), "texture1"), 0);
-        }
-
-        // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
-        // GL_FILL : l'interieur est plein
-        // GL_POINT : dessines uniquement les vertices
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        // Afficher un objet
-        vao.bind();
-        glDrawElements(GL_TRIANGLES, ebo.getCount(), GL_UNSIGNED_INT, 0);
-        vao.unbind();
-
-        window.swapBuffers();
-        window.pollEvents();
-    }
+        update(appState);
 
     return 0;
 }

@@ -30,12 +30,12 @@ void main()
     int pid = gl_PrimitiveID;
     vec4 colorWithoutTexture;
 
-    if (u_ColorMode == 0)
+    if (u_ColorMode == 1)
     {
         float gray = grayFromID(pid);
         colorWithoutTexture = vec4(vec3(gray), 1.0f);
     }
-    else if (u_ColorMode == 1)
+    else if (u_ColorMode == 0)
     {
         float r = clamp(flatPos.y * 0.5f + 0.5f, 0.0f, 1.0f);
         float g = clamp(flatPos.x * 0.5f + 0.5f, 0.0f, 1.0f);

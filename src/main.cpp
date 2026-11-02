@@ -120,12 +120,7 @@ int main(int argc, char **argv)
         std::array<float, 16> rotationMatrixX = Matrix::createRotationX(rotationAngleX);
 
         // Matrice de translation pour dezoomer l'objet 
-        std::array<float, 16> translationMatrix = {
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, -3.0f, 1.0f
-        };
+        std::array<float, 16> translationMatrix = Matrix::createTranslationZ(-3.0f);
 
         utils::glClearColorHex(0x0A0A2E);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

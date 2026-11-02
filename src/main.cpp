@@ -30,7 +30,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    if (!hasEnding(arg1, ".obj") && !hasEnding(arg1, ".OBJ"))
+    if (!checkExtension(arg1, ".obj") && !checkExtension(arg1, ".OBJ"))
     {
         std::cerr << "\nErreur : Seul les fichiers .obj sont acceptés.\n\n";
         std::cerr << "Utilisation : \n" << argv[0] << " <fichier.obj> [texture.bmp]\n";
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     if (argc >= 3)
     {
         std::string arg2 = argv[2];
-        if (!hasEnding(arg2, ".bmp") && !hasEnding(arg2, ".BMP"))
+        if (!checkExtension(arg2, ".bmp") && !checkExtension(arg2, ".BMP"))
         {
             std::cerr << "\nErreur : Seul les fichiers .bmp sont acceptés pour les textures.\n";
             return 1;

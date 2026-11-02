@@ -28,8 +28,6 @@ int main(int argc, char **argv)
 
     if (!ObjLoader::loadOBJ("./assets/fox.obj", vertices, indices))
         return -1;
-    std::cout << "Nombre de sommets : " << vertices.size() / 5 << std::endl; // Mis à jour pour refléter les 5 floats (x,y,z,u,v)
-    std::cout << "Nombre d'indices : " << indices.size() << std::endl;
 
     // Vertex Buffer Object (VBO) => Stocke les donnees
     //                            => permet d'envoyer autant de donnees que possible a la carte graphique
@@ -76,13 +74,9 @@ int main(int argc, char **argv)
         // Envoi des pixels bruts à OpenGL
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texturePixels.data());
         glGenerateMipmap(GL_TEXTURE_2D);
-
-        std::cout << "Texture BMP chargée avec succès ! (" << width << "x" << height << ")" << std::endl;
     }
     else
-    {
-        std::cout << "Pas de texture chargée, passage en mode couleur unie/gris." << std::endl;
-    }
+        std::cout << "Pas de texture chargée, passage en mode couleur." << std::endl;
 
     float rotationAngleY = 0.0f;
     float rotationAngleX = 0.0f;
@@ -104,16 +98,10 @@ int main(int argc, char **argv)
 
         // activation de la texture
         if (inputManager.processTextureToggle(window))
-        {
             targetShowTexture = !targetShowTexture;
-            std::cout << "Transition vers : " << (targetShowTexture ? "Texturé" : "Gris/Couleur") << std::endl;
-        }
 
         if (inputManager.processColorModeToggle(window))
-        {
             colorMode = (colorMode + 1) % 4; // alterne entre 4 mode de couleur
-            std::cout << "Mode de couleur changé : " << colorMode << std::endl;
-        }
 
         // transition progressive du mode couleur a texture, ou l'inverse
         float transitionSpeed = 2.0f;
@@ -168,13 +156,6 @@ int main(int argc, char **argv)
             glBindTexture(GL_TEXTURE_2D, textureID);
             glUniform1i(glGetUniformLocation(shaderProgram.getID(), "texture1"), 0);
         }
-
-        // Mise à jour de la couleur
-        float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        float redValue = sin(timeValue) * 2.0f + 0.5f;
-        GLint vertexColorLocation = glGetUniformLocation(shaderProgram.getID(), "ourColor");
-        glUniform4f(vertexColorLocation, 0.8f, greenValue, 1.0f, 0.8f);
 
         // GL_LINE : dessine les lignes entre les vertices sans remplir l'interieur
         // GL_FILL : l'interieur est plein

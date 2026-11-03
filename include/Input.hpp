@@ -27,13 +27,13 @@ private:
     float   getRotationSpeed() const;
 
 public:
-    float   processInputRotationY(Window &window);
-    float   processInputRotationX(Window &window);
-    float   processInputRotationZ(Window &window);
+    float   processInputRotationY();
+    float   processInputRotationX();
+    float   processInputRotationZ();
 
-    float   processInputTranslationX(Window &window);
-    float   processInputTranslationY(Window &window);
-    float   processInputTranslationZ(Window &window);
+    float   processInputTranslationX();
+    float   processInputTranslationY();
+    float   processInputTranslationZ();
 
     bool    changeTexture(Window &window);
     bool    changeColor(Window &window);

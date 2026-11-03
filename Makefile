@@ -1,7 +1,6 @@
 NAME        = Scop
 CC          = g++
-CFLAGS      = -Wall -std=c++17
-# CFLAGS      = -Wall -Wextra -Werror -std=c++17
+CFLAGS      = -Wall -Wextra -Werror -std=c++17
 IFLAGS		= -Iinclude/utils
 
 SRC_DIR     = src

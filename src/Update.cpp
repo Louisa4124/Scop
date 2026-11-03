@@ -60,13 +60,13 @@ void update(AppState &app)
             app.transitionFactor = 0.0f;
     }
 
-    app.rotationAngleY += app.inputManager.processInputRotationY(app.window);
-    app.rotationAngleX += app.inputManager.processInputRotationX(app.window);
-    app.rotationAngleZ += app.inputManager.processInputRotationZ(app.window);
+    app.rotationAngleY += app.inputManager.processInputRotationY();
+    app.rotationAngleX += app.inputManager.processInputRotationX();
+    app.rotationAngleZ += app.inputManager.processInputRotationZ();
     
-    app.modelPosX += app.inputManager.processInputTranslationX(app.window) * deltaTime;
-    app.modelPosY += app.inputManager.processInputTranslationY(app.window) * deltaTime;
-    app.modelPosZ += app.inputManager.processInputTranslationZ(app.window) * deltaTime;
+    app.modelPosX += app.inputManager.processInputTranslationX() * deltaTime;
+    app.modelPosY += app.inputManager.processInputTranslationY() * deltaTime;
+    app.modelPosZ += app.inputManager.processInputTranslationZ() * deltaTime;
 
     utils::glClearColorHex(0x2b2c41);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

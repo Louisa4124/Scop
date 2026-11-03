@@ -36,7 +36,7 @@ float Input::getRotationSpeed() const
     return speeds[speedIndex];
 }
 
-float Input::processInputRotationY(Window &window)
+float Input::processInputRotationY()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
@@ -67,7 +67,7 @@ float Input::processInputRotationY(Window &window)
     return 0.0f;
 }
 
-float Input::processInputRotationX(Window &window)
+float Input::processInputRotationX()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
@@ -92,7 +92,7 @@ float Input::processInputRotationX(Window &window)
     return 0.0f;
 }
 
-float Input::processInputRotationZ(Window &window)
+float Input::processInputRotationZ()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
@@ -117,7 +117,7 @@ float Input::processInputRotationZ(Window &window)
     return 0.0f;
 }
 
-float Input::processInputTranslationX(Window &window)
+float Input::processInputTranslationX()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
@@ -136,7 +136,7 @@ float Input::processInputTranslationX(Window &window)
     return 0.0f;
 }
 
-float Input::processInputTranslationY(Window &window)
+float Input::processInputTranslationY()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)
@@ -155,7 +155,7 @@ float Input::processInputTranslationY(Window &window)
     return 0.0f;
 }
 
-float Input::processInputTranslationZ(Window &window)
+float Input::processInputTranslationZ()
 {
     GLFWwindow *w = glfwGetCurrentContext();
     if (!w)

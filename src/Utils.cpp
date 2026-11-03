@@ -35,10 +35,10 @@ std::string findDefaultTexture(const std::string &objPath)
     if (matchingFile.is_open())
         return matchingPath;
 
-    //  par defaut si on ne trouve aucune texture on met les licornes
-    std::ifstream defaultTex("assets/mlp.bmp");
+    //  par defaut si on ne trouve aucune texture on met les chatons
+    std::ifstream defaultTex("assets/kittens.bmp");
     if (defaultTex.is_open())
-        return "assets/mlp.bmp";
+        return "assets/kittens.bmp";
 
     return "";
 }

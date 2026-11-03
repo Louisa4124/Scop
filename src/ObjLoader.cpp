@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <cmath>
 
+struct FaceVertex {
+    int vIdx;
+    int vtIdx;
+};
+
 // Structure pour relier les sommets avec leur textures
 struct VertexKey {
     int v;
@@ -30,19 +35,18 @@ bool ObjLoader::loadOBJ(const std::string &filePath,
     std::vector<float> rawPositions;
     std::vector<float> rawTexCoords;
 
-    struct FaceVertex {
-        int vIdx;
-        int vtIdx;
-    };
     std::vector<std::vector<FaceVertex>> faces;
 
     std::string line;
 
     // On initialise la BB (Bounnding Box)
     // => rectangle imaginaire qui contient entirement un object/scene
-    float minX = std::numeric_limits<float>::max(), maxX = std::numeric_limits<float>::lowest();
-    float minY = std::numeric_limits<float>::max(), maxY = std::numeric_limits<float>::lowest();
-    float minZ = std::numeric_limits<float>::max(), maxZ = std::numeric_limits<float>::lowest();
+    float minX = std::numeric_limits<float>::max();
+    float minY = std::numeric_limits<float>::max(); 
+    float minZ = std::numeric_limits<float>::max(); 
+    float maxX = std::numeric_limits<float>::lowest();
+    float maxY = std::numeric_limits<float>::lowest();
+    float maxZ = std::numeric_limits<float>::lowest();
 
     while (std::getline(file, line))
     {
